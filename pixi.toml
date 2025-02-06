@@ -1,0 +1,17 @@
+[project]
+authors = ["Tony Fast <tony.fast@gmail.com>"]
+channels = ["conda-forge"]
+description = "Add a short description here"
+name = "a11yhood"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+importnb = ">=2023.11.1,<2024"
+python-dotenv = ">=1.0.1,<2"
+
+[pypi-dependencies]
+python-graphql-client = ">=0.4.3, <0.5"
+
