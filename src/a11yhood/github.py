@@ -1,4 +1,5 @@
 from anyio import run
+from numpy import isin
 import dotenv, pandas, os
 from pathlib import Path
 import datetime
@@ -8,7 +9,7 @@ from platformdirs import user_data_dir
 from a11yhood.utils import new_logger, new_typer
 
 logger = new_logger(__name__)
-target = Path(user_data_dir("a11yhood", "github", datetime.date.today().isoformat()))
+target = Path(user_data_dir("a11yhood", "github", datetime.date.today().isoformat()), "github-at.parquet")  
 
 HERE = Path(locals().get("__file__") or "").parent
 dotenv.load_dotenv(HERE / ".env")
@@ -131,15 +132,28 @@ async def gather():
         .agg(list)
         .rename("topics")
     )
-    return data
+    data = data.join(
+        data.pop("languages").apply(itemgetter("nodes"))
+        .explode()
+        .dropna()
+        .apply(itemgetter("name"))
+        .groupby(pandas.Grouper(level=0))
+        .agg(list)
+    )
+    data.languages = data.languages.apply(
+        lambda x: x if isinstance(x, list) else []
+    )
+    # theres a schema problemw when reading languages
+    # we'll probably export multiple parquet files
+    return data.reset_index().drop(["languages", "id"], axis=1)
 
 
-def main(target: Path = target / "github"):
+def main(target: Path = target):
     df = run(gather)
     logger.debug(type(df))
-    target.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(target / "github-at.parquet")
-    logger.debug(f"""created {target / "github-at.parquet"} with {len(df)} entries""")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(target )
+    logger.debug(f"""created {target} with {len(df)} entries""")
 
 
 def _typer():

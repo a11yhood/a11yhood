@@ -17,12 +17,10 @@ import datetime
 
 from a11yhood.utils import new_logger, new_typer
 
-target = Path(user_data_dir("a11yhood", "ravelry", datetime.date.today().isoformat()))
+target = Path(user_data_dir("a11yhood", "ravelry", datetime.date.today().isoformat()), "ravelry-at.parquet")
 
 HERE = Path(locals().get("__file__") or "").parent
 dotenv.load_dotenv(HERE / ".env")
-
-__import__("dotenv").load_dotenv()
 auth = (os.environ["RAVELRY_USERNAME"], os.environ["RAVELRY_PASSWORD"])
 searches: dict = loads(
     """adaptive.pa = "adaptive"
@@ -147,8 +145,7 @@ async def main_patterns(searches=searches) -> DataFrame:
 
 def main(target: Path = target):
     df = run(main_patterns)
-    target.mkdir(parents=True, exist_ok=True)
-    target /= "ravelry-at.parquet"
+    target.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(target)
     logger.debug(f"""created {target} with {len(df)} entries""")
 
