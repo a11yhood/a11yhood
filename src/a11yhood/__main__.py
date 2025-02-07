@@ -3,6 +3,8 @@ from pathlib import Path
 from anyio import run
 from platformdirs import user_data_dir
 import typer
+from .github import _typer as github_app
+from .ravelry import _typer as ravelry_app
 
 target = Path(user_data_dir("a11yhood", "github", datetime.date.today().isoformat()))
 app = typer.Typer(
@@ -11,18 +13,8 @@ app = typer.Typer(
 )
 
 app.add_typer(scraper := typer.Typer(name="scraper"))
-
-
-@scraper.command()
-def github(target: Path = target / "github"):
-    import importnb
-
-    # with importnb.Notebook():
-    from . import gh
-    print("start github scraper")
-    run(gh.main, target)
-    return
-
+scraper.add_typer(github_app())
+scraper.add_typer(ravelry_app())
 
 if __name__ == "__main__":
     app()
