@@ -7,6 +7,7 @@ def new_typer(*funcs, **kwargs):
 
     app = Typer(
         **kwargs,
+        add_completion=False,
         context_settings={"help_option_names": ["-h", "--help"]},
         pretty_exceptions_enable=False,
     )
