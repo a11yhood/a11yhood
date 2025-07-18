@@ -1,0 +1,33 @@
+{
+  "fields": [
+    {
+      "name": "index",
+      "type": "string"
+    },
+    {
+      "name": "description",
+      "type": "string"
+    },
+    {
+      "name": "stargazerCount",
+      "type": "number"
+    },
+    {
+      "name": "forkCount",
+      "type": "number"
+    },
+    {
+      "name": "license",
+      "type": "string"
+    },
+    {
+      "name": "tags",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    }
+  ],
+  "pandas_version": "1.4.0"
+}
